@@ -48,7 +48,16 @@
 ### NASM汇编器
 蜂鸟操作系统使用汇编语言编写，所以就需要一个汇编器。NASM全程The Netwide Assembler，是一个为可移植性与模块化而设计的80x86的汇编器。它支持相当多的目标文件格式，包括Linux和BSD下的a.out，ELF，COFF，Mach-O，16位和32位的OBJ(OMF)格式，以及Win32和Win64。它还可以输出纯二进制文件。它的语法设计得相当简洁易懂，和Intel语法相似但更简单。它支持“Pentium”、“P6”、“MMX”、“3DNow!”、“SSE”和“SSE2”指令集。
 
-NASM的安装过程比较简单，访问[NASM的官方网站](https://www.nasm.us "NASM的主页")并点击页面上方的DOWNLOAD，
+NASM的安装过程比较简单，访问[NASM的官方网站](https://www.nasm.us)并点击页面上方的DOWNLOAD，然后选择一个版本，笔者安装的版本是2.13.03。在接下来的页面中带有doc字样的是NASM的文档，nasm-2.13.03.XXX是软件源码，而那几个文件夹里的是各操作系统下的NASM安装程序或免安装压缩包。在Linux下编译安装的方法如下：
+
+```
+wget https://www.nasm.us/pub/nasm/releasebuilds/2.13.03/nasm-2.13.03.tar.xz	#下载
+tar -xJvf nasm-2.13.03.tar.xz							#解压缩
+cd nasm-2.13.03/								#进入源码目录
+./configure									#配置
+make										#编译
+sudo make install								#安装
+```
 
 ## 内核
 
