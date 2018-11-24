@@ -78,7 +78,16 @@ $ make							#编译
 $ sudo make install					#安装
 ```
 
-bochs有很多选项可以配置，这些选项大多用来控制软件的某一功能启用与否，
+bochs有很多选项可以配置，这些选项大多用来控制软件的某一功能启用与否，以下是几个比较实用的选项：
+
+```
+--enable-debugger			启用bochs的调试功能
+--enable-x86-64				添加对x86_64指令集的支持
+--enable-readline			编译时启用readline库
+--enable-avx				添加对AVX指令集的支持
+```
+
+调试功能和x86_64指令集的支持是必须的，其他的功能要么不需要启用要么默认启用。关于各个选项的详细说明可以参考官方文档的[“Configure Options”一节](http://bochs.sourceforge.net/doc/docbook/user/compiling.html#CONFIG-OPTS)。
 
 ## 内核
 
