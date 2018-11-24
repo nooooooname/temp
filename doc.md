@@ -51,13 +51,15 @@
 NASM的安装过程比较简单，访问[NASM的官方网站](https://www.nasm.us)并点击页面上方的DOWNLOAD，然后选择一个版本，笔者安装的版本是2.13.03。在接下来的页面中带有doc字样的是NASM的文档，nasm-2.13.03.XXX是软件源码，而那几个文件夹里的是各操作系统下的NASM安装程序或免安装压缩包。在Linux下编译安装的方法如下：
 
 ```
-wget https://www.nasm.us/pub/nasm/releasebuilds/2.13.03/nasm-2.13.03.tar.xz	#下载
-tar -xJvf nasm-2.13.03.tar.xz							#解压缩
-cd nasm-2.13.03/								#进入源码目录
-./configure									#配置
-make										#编译
-sudo make install								#安装
+$ wget https://www.nasm.us/pub/nasm/releasebuilds/2.13.03/nasm-2.13.03.tar.xz	#下载
+$ tar -xJvf nasm-2.13.03.tar.xz							#解压缩
+$ cd nasm-2.13.03/								#进入源码目录
+$ ./configure									#配置
+$ make										#编译
+$ sudo make install								#安装
 ```
+
+唯一有可能出问题的是配置那一步，在配置那一步中如果报了错，那一定是系统中没有安装某个NASM所依赖的软件导致的，根据报错信息安装缺少的软件后重新配置即可。
 
 ## 内核
 
