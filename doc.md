@@ -102,6 +102,83 @@ bochs有很多选项可以配置，这些选项大多用来控制软件的某一
 ### dd for windows
 dd（disk dump）是一个用来操作文件或磁盘数据的Linux命令，在把引导扇区和内核写入镜像文件的时候会用到它，因此对于Windows用户来说需要下载[dd for windows](http://www.chrysocome.net/dd)，下载完将dd.exe解压到PATH下即可。
 
+### 编译项目
+搭建好开发环境后就可以编译项目了，进入项目的顶层目录，创建一个用来存放目标文件的目录，然后编译所有的汇编代码，Linux命令如下：
+
+```
+$ mkdir 编译
+$ nasm -I 源码/头文件/ 源码/引导扇区.asm -o 编译/引导扇区
+$ nasm -I 源码/头文件/ 源码/内核.asm -o 编译/内核
+$ nasm -I 源码/头文件/ 源码/驱动/硬盘驱动.asm -o 编译/硬盘驱动
+$ nasm -I 源码/头文件/ 源码/文件系统.asm -o 编译/文件系统
+$ nasm -I 源码/头文件/ 源码/终端.asm -o 编译/终端
+$ nasm -I 源码/头文件/ 源码/外壳.asm -o 编译/外壳
+$ nasm -I 源码/头文件/ 源码/a1.asm -o 编译/a1
+```
+
+如果是在Windows下编译，则需要先把所有的源文件转成GB2312编码，再把上述命令中的“/”换成“\”来执行。编译出来的这些目标文件就是操作系统，稍后我们把它“安装”到bochs虚拟机的硬盘上。
+
+接着编译磁盘镜像编辑器，它的源码只有一个文件Main.java，主类是Main。
+
+```
+$ javac 工具/Main.java -d 编译/
+$ echo "Main-Class: Main" > 编译/manifest
+$ cd 编译
+$ jar cmf manifest Main.jar ./*.class
+```
+
+如果是在Windows下编译，则需要在javac命令后边加一个参数-encoding utf-8，echo命令中的双引号去掉，再把命令中所有的“/”换成“\”来执行。
+
+然后需要创建一个硬盘镜像文件，笔者使用的是bximage，一个bochs附带的命令行工具。运行bximage然后按照屏幕提示一步步操作就行，唯一需要注意的是镜像类型要选flat，这是一种文件内容和硬盘数据一模一样的类型，也是磁盘镜像编辑器唯一支持的类型。以下是笔者的屏幕输出：
+
+```
+========================================================================
+                                bximage
+  Disk Image Creation / Conversion / Resize and Commit Tool for Bochs
+         $Id: bximage.cc 13069 2017-02-12 16:51:52Z vruppert $
+========================================================================
+
+1. Create new floppy or hard disk image
+2. Convert hard disk image to other format (mode)
+3. Resize hard disk image
+4. Commit 'undoable' redolog to base image
+5. Disk image info
+
+0. Quit
+
+Please choose one [0] 1
+
+Create image
+
+Do you want to create a floppy disk image or a hard disk image?
+Please type hd or fd. [hd]
+
+What kind of image should I create?
+Please type flat, sparse, growing, vpc or vmware4. [flat]
+
+Enter the hard disk size in megabytes, between 10 and 8257535
+[10]
+
+What should be the name of the image?
+[c.img] disk.img
+
+Creating hard disk image 'disk.img' with CHS=20/16/63
+
+The following line should appear in your bochsrc:
+  ata0-master: type=disk, path="disk.img", mode=flat
+```
+
+注意倒数第3行的“CHS=20/16/63”，C、H、S分别是柱面、磁头和扇区，稍后创建bochs虚拟机的时候会用到这3个值。
+
+有了“硬盘”之后就要把操作系统“安装”上去。首先写入引导扇区和内核，这2个东西是直接写入扇区的，引导扇区写入第一个扇区，内核写入第2到第66个扇区，命令如下：
+
+```
+dd if=引导扇区 of=disk.img conv=notrunc
+dd if=内核 of=disk.img seek=1 conv=notrunc bs=512
+```
+
+剩下的文件就需要写入到硬盘镜像的文件系统中了，镜像文件所有和分区及文件系统相关的操作都由磁盘镜像编辑器完成。其用法如下：
+
 ## 内核
 
 ## 进程与可执行文件
