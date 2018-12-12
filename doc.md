@@ -173,8 +173,8 @@ The following line should appear in your bochsrc:
 有了“硬盘”之后就要把操作系统“安装”上去。首先写入引导扇区和内核，这2个东西是直接写入扇区的，引导扇区写入第一个扇区，内核写入第2到第66个扇区，命令如下：
 
 ```
-dd if=引导扇区 of=disk.img conv=notrunc
-dd if=内核 of=disk.img seek=1 conv=notrunc bs=512
+$ dd if=引导扇区 of=disk.img conv=notrunc
+$ dd if=内核 of=disk.img seek=1 conv=notrunc bs=512
 ```
 
 剩下的文件就需要写入到硬盘镜像的文件系统中了，镜像文件所有和分区及文件系统相关的操作都由磁盘镜像编辑器完成。其用法如下：
