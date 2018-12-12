@@ -179,6 +179,109 @@ $ dd if=内核 of=disk.img seek=1 conv=notrunc bs=512
 
 剩下的文件就需要写入到硬盘镜像的文件系统中了，镜像文件所有和分区及文件系统相关的操作都由磁盘镜像编辑器完成。其用法如下：
 
+```
+java -jar Main.jar [路径]文件名		用磁盘镜像编辑器打开一个文件。
+					打开之后是一个命令行界面，">"号前边的是当前目录，目前只支持以下6条命令：
+mkfs id 起始扇区号 分区容量 卷标		创建一个分区。
+					其中id的范围是1-4，起始扇区号必须是8的倍数，分区容量的单位是簇（8扇区）。
+ls					查看当前目录下的文件
+cd 路径					改变当前路径
+mkdir 目录名				创建一个目录
+emerge 文件名				导入文件到当前目录
+exit					退出程序
+```
+
+首先用镜像编辑器打开disk.img，然后创建一个分区：
+
+```
+$ java -jar Main.jar disk.img
+/>mkfs 1 72 200 p1
+```
+
+创建分区的时候会自动进行格式化。接着进入该分区，在根目录导入外壳和a1：
+
+```
+/>cd p1
+/p1/>emerge 外壳
+/p1/>emerge a1
+```
+
+创建名为“模块”的目录，进入该目录然后导入剩下的3个文件并退出：
+
+```
+/p1/>mkdir 模块
+/p1/>cd 模块
+/p1/模块/>emerge 硬盘驱动
+/p1/模块/>emerge 文件系统
+/p1/模块/>emerge 终端
+/p1/模块/>exit
+```
+
+至此，操作系统就安装完成了，接下来要做的就是创建一台bochs虚拟机让它跑起来。不过在这之前最好写一个Makefile，否则每次修改完代码都得重复一遍上述步骤。
+
+Makefile：
+
+```
+OBJ=引导扇区 内核 硬盘驱动 文件系统 终端 外壳 a1
+目标=$(foreach o,$(OBJ),编译/$(o))
+INC=x86.inc 进程.inc 系统.inc 用户.inc 栈.inc
+头文件=$(foreach n,$(INC),源码/头文件/$(n))
+
+disk.img: $(头文件) $(目标) 编译/Main.jar bximage命令 镜像编辑器命令
+	# 生成硬盘镜像文件
+	rm -rf disk.img
+	cd 编译 && bximage < ../bximage命令 > /dev/null
+	# 写入引导扇区和内核镜像
+	dd if=编译/引导扇区 of=编译/disk.img conv=notrunc 2> /dev/null
+	dd if=编译/内核 of=编译/disk.img seek=1 conv=notrunc bs=512 2> /dev/null
+	# 创建文件系统,新建目录并复制文件
+	cd 编译 && java -jar Main.jar disk.img < ../镜像编辑器命令 > /dev/null
+	mv 编译/disk.img ./
+
+编译/%: 源码/%.asm
+	nasm -I 源码/头文件/ $< -o $@
+
+编译/%: 源码/驱动/%.asm
+	nasm -I 源码/头文件/ $< -o $@
+
+编译/Main.jar: 工具/Main.java
+	javac 工具/Main.java -d 编译/
+	echo "Main-Class: Main" > 编译/manifest
+	cd 编译 && jar cmf manifest Main.jar ./*.class && rm -f manifest
+
+.PHONY: clean
+clean:
+	rm -rf 编译/*
+	rm -f disk.img
+```
+
+bximage命令：
+
+```
+1
+hd
+flat
+10
+disk.img
+
+```
+
+镜像编辑器命令：
+
+```
+mkfs 1 72 200 p1
+cd p1
+emerge 外壳
+emerge a1
+mkdir 模块
+cd 模块
+emerge 硬盘驱动
+emerge 文件系统
+emerge 终端
+exit
+
+```
+
 ## 内核
 
 ## 进程与可执行文件
