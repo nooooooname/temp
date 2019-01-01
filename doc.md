@@ -255,6 +255,8 @@ clean:
 	rm -f disk.img
 ```
 
+通过Makefile可以看出，笔者将bximage和磁盘镜像编辑器的命令分别保存到了文件中，因为这样更加便于修改。
+
 bximage命令：
 
 ```
@@ -281,6 +283,8 @@ emerge 终端
 exit
 
 ```
+
+在Windows下没有GNU Make工具，不过可以把编译命令写成一个批处理脚本来实现相同的功能。
 
 ## 内核
 
