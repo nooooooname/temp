@@ -317,7 +317,7 @@ bochs虚拟机的配置不仅包含了硬件设备这样的“实体”，还包
 
 ```
 bochs -q -f 配置文件名			# Linux
-bochsdbg -q -f 配置文件名		# Windows
+bochsdbg -q -f 配置文件名			# Windows
 ```
 
 其中-q表示快速启动，省去了载入配置文件后修改的步骤。-f表示指定配置文件名。另外，在Windows下还可以通过右键点击.bxrc文件再点Debugger的方式来启动调试。
