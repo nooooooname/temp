@@ -102,7 +102,7 @@ bochs有很多选项可以配置，这些选项大多用来控制软件的某一
 ### dd for windows
 dd（disk dump）是一个用来操作文件或磁盘数据的Linux命令，在把引导扇区和内核写入镜像文件的时候会用到它，因此对于Windows用户来说需要下载[dd for windows](http://www.chrysocome.net/dd)，下载完将dd.exe解压到PATH下即可。
 
-### 编译项目
+### 构建项目
 搭建好开发环境后就可以编译项目了，进入项目的顶层目录，创建一个用来存放目标文件的目录，然后编译所有的汇编代码，Linux命令如下：
 
 ```
